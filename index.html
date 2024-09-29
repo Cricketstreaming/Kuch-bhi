@@ -1,0 +1,258 @@
+Unknown:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="shortcut icon" type="image/x-icon" href="">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins|Quattrocento+Sans" rel="stylesheet"/>
+    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="assets/js/hide-banner.js"></script>
+    <style>
+        html, body {
+            font-family: Poppins;
+            background: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+        }
+
+        .loading-text {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            text-align: center;
+            width: 100%;
+            height: 100px;
+            line-height: 100px;
+        }
+
+        .loading-text span {
+            display: inline-block;
+            margin: 0 5px;
+            color: #00b3ff;
+            font-family: 'Quattrocento Sans', sans-serif;
+        }
+
+        .loading-text span:nth-child(1) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 0s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(2) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 0.2s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(3) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 0.4s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(4) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 0.6s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(5) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 0.8s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(6) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 1s infinite linear alternate;
+        }
+
+        .loading-text span:nth-child(7) {
+            filter: blur(0px);
+            animation: blur-text 1.5s 1.2s infinite linear alternate;
+        }
+
+        @keyframes blur-text {
+            0% {
+                filter: blur(0px);
+            }
+            100% {
+                filter: blur(4px);
+            }
+        }
+
+        .plyr__video-wrapper::after {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+            content: '';
+            height: 35px;
+            width: 35px;
+            background: url('') no-repeat;
+            background-size: 30px auto, auto;
+        }
+
+        /* Banner ad styles */
+        .banner-ad {
+            width: 100%;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .banner-ad img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Video container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+.modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            top: 10px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-text">
+            <span>L</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span>
+        </div>
+    </div>
+
+    <!-- Top banner ad -->
+    
+    <!-- Video player -->
+    <div class="video-container">
+        <video id="player" hideControls="false" autoplay controls crossorigin poster="POSTER_LINK" playsinline>
+            <source type="application/vnd.apple.mpegurl" src="server.php?v=skysme"></video>
+    </div>
+
+    <!-- Bottom banner ad -->
+    
+
+    <!-- Embed code section -->
+    
+
+    <!-- The Modal -->
+    <div id="embedModal" class="modal">
+        
+        </div>
+    </div>
+
+    <script>
+        setTimeout(videovisible, 4000);
+        function videovisible() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const videoElement = document.querySelector("video");
+            const videoSource = videoElement.getElementsByTagName("source")[0].src;
+            const playerOptions = {};
+
+            if (Hls.isSupported()) {
+                const hlsConfig = { maxMaxBufferLength: 100 };
+                const hls = new Hls(hlsConfig);
+                hls.loadSource(videoSource);
+                hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                    const qualityOptions = hls.levels.map(level => level.height);
+                    playerOptions.quality = {
+                        default: qualityOptions[0],
+                        options: qualityOptions,
+                        forced: true,
+                        onChange: quality => {
+                            window.hls.levels.forEach((level, index) => {
+                                if (level.height === quality) window.hls.currentLevel = index;
+                            });
+                        }
+                    };
+                    new Plyr(videoElement, playerOptions);
+                });
+                hls.attachMedia(videoElement);
+                window.hls = hls;
+            } else {
+                new Plyr(videoElement, playerOptions);
+            }
+
+            // Get the modal
+            const modal = document.getElementById("embedModal");
+            const span = document.getElementsByClassName("close")[0];
+            const embedCodeButton = document.getElementById('generateEmbedCode');
+            const embedCodeTextarea = document.getElementById('embedCode');
+
+            embedCodeButton.addEventListener('click', () => {
+                const embedCode = <iframe src="${videoSource}" width="640" height="360" frameborder="0" allowfullscreen></iframe>;
+                embedCodeTextarea.value = embedCode;
+                modal.style.display = "block";
+            });
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+<a href="https://t.me/+Tg8fmhoegLA2ZDM1" target="_blank" style="display: inline-block; background-color: #0088cc; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+    Join Us on Telegram
+</a>
